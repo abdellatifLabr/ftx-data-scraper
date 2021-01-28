@@ -8,6 +8,8 @@ pandas = "*"
 django = "*"
 django-environ = "*"
 celery = "*"
+django-celery-beat = "==2.1.0"
+redis = "*"
 
 [dev-packages]
 pylint = "*"
@@ -15,4 +17,4 @@ pylint-django = "*"
 autopep8 = "*"
 
 [requires]
-python_version = "3.8"
+python_version = "3.9"
