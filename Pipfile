@@ -17,6 +17,7 @@ django-filter = "*"
 channels = "*"
 daphne = "*"
 channels-redis = "*"
+django-channels-graphql-ws = "*"
 
 [dev-packages]
 pylint = "*"
