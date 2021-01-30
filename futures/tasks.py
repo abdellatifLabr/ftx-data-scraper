@@ -1,8 +1,9 @@
 import json
 import urllib.request
 from celery import shared_task
+from django.db.models import Q
 
-from .models import Future
+from .models import Future, Spread
 from .utils import snake_case
 
 
@@ -17,6 +18,14 @@ def request_json_data(url):
     content = response.read()
     json_content = json.loads(content)
     return json_content
+
+
+def calculate_buy_spread(ask_a, bid_b):
+    return (ask_a - bid_b) / (ask_a/2 + bid_b / 2)
+
+
+def calculate_sell_spread(ask_b, bid_a):
+    return (bid_a - ask_b) / (bid_a / 2 + ask_b / 2)
 
 
 @shared_task
@@ -48,6 +57,31 @@ def get_futures_markets():
                 setattr(_future, field, value)
 
             _future.save()
-
         except Future.DoesNotExist:
             Future.objects.create(**future)
+
+    # make combintions
+    targeted_futures = Future.objects.only('name', 'underlying', 'ask', 'bid').filter(
+        Q(
+            Q(description__contains='Futures') or
+            Q(description__contains='Perpetual')
+        ) and
+        ~Q(description__contains='Hashrate')
+    )
+
+    for i in range(targeted_futures.count()):
+        for j in range(targeted_futures.count()):
+            future_a = targeted_futures[i]
+            future_b = targeted_futures[j]
+
+            if future_a != future_b:
+                if future_a.underlying == future_b.underlying:
+                    if future_a.ask and future_a.bid and future_b.ask and future_b.bid:
+                        buy_spread = calculate_buy_spread(future_a.ask, future_b.bid)
+                        sell_spread = calculate_sell_spread(future_b.ask, future_a.bid)
+                        Spread.objects.create(
+                            pair_a=future_a.name,
+                            pair_b=future_b.name,
+                            buy_spread=buy_spread,
+                            sell_spread=sell_spread
+                        )

@@ -44,3 +44,11 @@ class Future(models.Model):
 
     def __str__(self):
         return self.name
+
+
+class Spread(models.Model):
+    pair_a = models.CharField(max_length=50)
+    pair_b = models.CharField(max_length=50)
+    buy_spread = models.FloatField()
+    sell_spread = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
