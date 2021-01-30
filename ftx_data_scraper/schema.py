@@ -10,4 +10,11 @@ class Query(
     pass
 
 
-schema = graphene.Schema(query=Query)
+class Subscription(
+    futures.schema.Subscription,
+    graphene.ObjectType
+):
+    pass
+
+
+schema = graphene.Schema(query=Query, subscription=Subscription)
