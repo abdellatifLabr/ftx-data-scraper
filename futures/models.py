@@ -52,3 +52,6 @@ class Spread(models.Model):
     buy_spread = models.FloatField()
     sell_spread = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return f'{self.pair_a}/{self.pair_b}'
