@@ -6,6 +6,9 @@ from ..filters import SpreadFilterSet, FutureFilterSet
 
 
 class SpreadNode(DjangoObjectType):
+    pk = graphene.Int(source='pk')
+    name = graphene.String(source='name')
+
     class Meta:
         model = Spread
         filterset_class = SpreadFilterSet
