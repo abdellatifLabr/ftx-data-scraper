@@ -77,6 +77,20 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ftx_data_scraper.wsgi.application'
 
 
+ASGI_APPLICATION = 'ftx_data_scraper.routing.application'
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            'hosts': [
+                env('REDIS_URL'),
+            ]
+        }
+    }
+}
+
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
