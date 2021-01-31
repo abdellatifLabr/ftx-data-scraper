@@ -31,24 +31,24 @@ class SpreadChartQuery(graphene.ObjectType):
         data = None
         if time_frame == 'minute':
             data = spreads.annotate(
-                minute=TruncMinute('created_at')).values('minute').annotate(
+                timestamp=TruncMinute('created_at')).values('timestamp').annotate(
                 buy_spread=Avg('buy_spread'),
                 sell_spread=Avg('sell_spread')).values(
-                'buy_spread', 'sell_spread', 'minute').order_by('minute')[:count]
+                'buy_spread', 'sell_spread', 'timestamp').order_by('timestamp')[:count]
 
         elif time_frame == 'hour':
             data = spreads.annotate(
-                hour=TruncHour('created_at')).values('hour').annotate(
+                timestamp=TruncHour('created_at')).values('timestamp').annotate(
                 buy_spread=Avg('buy_spread'),
                 sell_spread=Avg('sell_spread')).values(
-                'buy_spread', 'sell_spread', 'hour').order_by('hour')[:count]
+                'buy_spread', 'sell_spread', 'timestamp').order_by('timestamp')[:count]
 
         elif time_frame == 'day':
             data = spreads.annotate(
-                day=TruncDay('created_at')).values('day').annotate(
+                timestamp=TruncDay('created_at')).values('timestamp').annotate(
                 buy_spread=Avg('buy_spread'),
                 sell_spread=Avg('sell_spread')).values(
-                'buy_spread', 'sell_spread', 'day').order_by('day')[:count]
+                'buy_spread', 'sell_spread', 'timestamp').order_by('timestamp')[:count]
 
         return data
 
