@@ -66,3 +66,6 @@ class Spread(models.Model):
 
     def __str__(self):
         return str(self.pair)
+
+    class Meta:
+        ordering = ['created_at']
