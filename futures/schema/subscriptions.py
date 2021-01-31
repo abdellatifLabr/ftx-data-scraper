@@ -14,11 +14,11 @@ class SpreadSubscription(channels_graphql_ws.Subscription):
     @staticmethod
     def subscribe(root, info, pair_id, **kwargs):
         try:
-            Pair.objects.get(pk=pair_id)
+            pair = Pair.objects.get(pk=pair_id)
         except Pair.DoesNotExist:
             raise Exception('This pair does not exist')
 
-        group_name = f'spread@{pair_id}'
+        group_name = f'spread@{pair.id}'
         return [group_name]
 
     @staticmethod
