@@ -7,8 +7,9 @@ class SpreadFilterSet(FilterSet):
     class Meta:
         model = Spread
         fields = {
-            'pair__pair_a': ['exact'],
-            'pair__pair_b': ['exact'],
+            'pair__id': ['exact'],
+            'pair__pair_a__id': ['exact'],
+            'pair__pair_b__id': ['exact'],
             'created_at': ['exact', 'gt', 'gte', 'lt', 'lte'],
         }
 
