@@ -3,7 +3,7 @@ import urllib.request
 from celery import shared_task
 from django.db.models import Q
 
-from .models import Future, Spread
+from .models import Future, Spread, Pair
 from .utils import snake_case
 
 
@@ -79,9 +79,6 @@ def get_futures_markets():
                     if future_a.ask and future_a.bid and future_b.ask and future_b.bid:
                         buy_spread = calculate_buy_spread(future_a.ask, future_b.bid)
                         sell_spread = calculate_sell_spread(future_b.ask, future_a.bid)
-                        Spread.objects.create(
-                            pair_a=future_a.name,
-                            pair_b=future_b.name,
-                            buy_spread=buy_spread,
-                            sell_spread=sell_spread
-                        )
+
+                        pair, _ = Pair.objects.get_or_create(pair_a=future_a, pair_b=future_b)
+                        Spread.objects.create(pair=pair, buy_spread=buy_spread, sell_spread=sell_spread)

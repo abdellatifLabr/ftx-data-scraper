@@ -4,6 +4,7 @@ import graphene
 from .queries import (
     SpreadQuery,
     FutureQuery,
+    PairQuery,
 )
 from .subscriptions import (
     SpreadSubscription,
@@ -13,6 +14,7 @@ from .subscriptions import (
 class Query(
     SpreadQuery,
     FutureQuery,
+    PairQuery,
     graphene.ObjectType
 ):
     pass

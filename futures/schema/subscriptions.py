@@ -1,19 +1,24 @@
 import graphene
 import channels_graphql_ws
 
-from ..models import Spread
+from ..models import Pair
 from .nodes import SpreadNode
 
 
 class SpreadSubscription(channels_graphql_ws.Subscription):
     class Arguments:
-        pair = graphene.String(required=True)
+        pair_id = graphene.ID(required=True)
 
     spread = graphene.Field(SpreadNode)
 
     @staticmethod
-    def subscribe(root, info, pair, **kwargs):
-        group_name = f'spread@{pair}'
+    def subscribe(root, info, pair_id, **kwargs):
+        try:
+            Pair.objects.get(pk=pair_id)
+        except Pair.DoesNotExist:
+            raise Exception('This pair does not exist')
+
+        group_name = f'spread@{pair_id}'
         return [group_name]
 
     @staticmethod

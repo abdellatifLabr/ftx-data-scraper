@@ -46,12 +46,9 @@ class Future(models.Model):
         return self.name
 
 
-class Spread(models.Model):
-    pair_a = models.CharField(max_length=50)
-    pair_b = models.CharField(max_length=50)
-    buy_spread = models.FloatField()
-    sell_spread = models.FloatField()
-    created_at = models.DateTimeField(auto_now_add=True)
+class Pair(models.Model):
+    pair_a = models.ForeignKey(Future, related_name='a_pairs', on_delete=models.CASCADE)
+    pair_b = models.ForeignKey(Future, related_name='b_pairs', on_delete=models.CASCADE)
 
     @property
     def name(self):
@@ -59,3 +56,13 @@ class Spread(models.Model):
 
     def __str__(self):
         return f'{self.pair_a}/{self.pair_b}'
+
+
+class Spread(models.Model):
+    pair = models.ForeignKey(Pair, related_name='spreads', on_delete=models.CASCADE)
+    buy_spread = models.FloatField()
+    sell_spread = models.FloatField()
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.pair)
