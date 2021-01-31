@@ -7,6 +7,7 @@ from ..filters import SpreadFilterSet, FutureFilterSet
 
 class SpreadNode(DjangoObjectType):
     pk = graphene.Int(source='pk')
+    timestamp = graphene.DateTime(source='created_at')
 
     class Meta:
         model = Spread

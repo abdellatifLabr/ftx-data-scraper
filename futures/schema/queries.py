@@ -1,6 +1,6 @@
 import graphene
 from graphene_django.filter import DjangoFilterConnectionField
-from django.db.models.functions import TruncDay, TruncHour, TruncMinute
+from django.db.models.functions import Trunc
 from django.db.models import Avg
 
 from ..models import Pair
@@ -28,27 +28,11 @@ class SpreadChartQuery(graphene.ObjectType):
             raise Exception('This pair does not exist')
 
         spreads = pair.spreads.all()
-        data = None
-        if time_frame == 'minute':
-            data = spreads.annotate(
-                timestamp=TruncMinute('created_at')).values('timestamp').annotate(
-                buy_spread=Avg('buy_spread'),
-                sell_spread=Avg('sell_spread')).values(
-                'buy_spread', 'sell_spread', 'timestamp').order_by('timestamp')[:count]
-
-        elif time_frame == 'hour':
-            data = spreads.annotate(
-                timestamp=TruncHour('created_at')).values('timestamp').annotate(
-                buy_spread=Avg('buy_spread'),
-                sell_spread=Avg('sell_spread')).values(
-                'buy_spread', 'sell_spread', 'timestamp').order_by('timestamp')[:count]
-
-        elif time_frame == 'day':
-            data = spreads.annotate(
-                timestamp=TruncDay('created_at')).values('timestamp').annotate(
-                buy_spread=Avg('buy_spread'),
-                sell_spread=Avg('sell_spread')).values(
-                'buy_spread', 'sell_spread', 'timestamp').order_by('timestamp')[:count]
+        data = spreads.annotate(
+            timestamp=Trunc('created_at', time_frame)).values('timestamp').annotate(
+            buy_spread=Avg('buy_spread'),
+            sell_spread=Avg('sell_spread')).values(
+            'buy_spread', 'sell_spread', 'timestamp').order_by('timestamp')[:count]
 
         return data
 
