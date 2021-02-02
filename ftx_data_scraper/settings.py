@@ -108,6 +108,10 @@ if 'RDS_DB_NAME' in os.environ:
             'PORT': env('RDS_PORT'),
         }
     }
+elif env.db():
+    DATABASES = {
+        'default': env.db(),
+    }
 else:
     DATABASES = {
         'default': {
@@ -163,5 +167,10 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
 CELERY_ACCEPT_CONTENT = ['json']
 CELERY_TASK_SERIALIZER = 'json'
-CELERY_BROKER_URL = env('REDIS_URL')
+
+if DEBUG:
+    CELERY_BROKER_URL = env('REDIS_URL')
+else:
+    CELERY_BROKER_URL = env('CLOUDAMQP_URL')
+
 CELERY_RESULT_BACKEND = env('REDIS_URL')
