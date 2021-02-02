@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django_celery_beat',
+    'django_celery_results',
     'graphene_django',
     'futures',
 ]
@@ -170,7 +171,7 @@ CELERY_TASK_SERIALIZER = 'json'
 
 if DEBUG:
     CELERY_BROKER_URL = env('REDIS_URL')
+    CELERY_RESULT_BACKEND = env('REDIS_URL')
 else:
     CELERY_BROKER_URL = env('CLOUDAMQP_URL')
-
-CELERY_RESULT_BACKEND = env('REDIS_URL')
+    CELERY_RESULT_BACKEND = 'django-db'
