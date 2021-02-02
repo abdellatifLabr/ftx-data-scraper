@@ -18,6 +18,7 @@ channels = "*"
 daphne = "*"
 channels-redis = "*"
 django-channels-graphql-ws = "*"
+django-celery-results = "*"
 
 [dev-packages]
 pylint = "*"
