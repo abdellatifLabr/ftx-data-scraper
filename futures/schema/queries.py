@@ -36,7 +36,7 @@ class SpreadChartQuery(graphene.ObjectType):
             timestamp=Trunc('created_at', time_frame)).values('timestamp').annotate(
             buy_spread=Avg('buy_spread'),
             sell_spread=Avg('sell_spread')).values(
-            'buy_spread', 'sell_spread', 'timestamp').order_by('timestamp')
+            'buy_spread', 'sell_spread', 'timestamp', 'pair').order_by('timestamp')
 
         return data
 
