@@ -12,6 +12,6 @@ def on_spread_created(sender, instance, created, **kwargs):
 
     spread = instance
     SpreadSubscription.broadcast(
-        group=f'spread@{spread.pair.id}',
+        group=f'spreads@{spread.pair.id}',
         payload=spread
     )
