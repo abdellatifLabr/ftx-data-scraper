@@ -16,27 +16,45 @@ class SpreadQuery(graphene.ObjectType):
     spreads = DjangoFilterConnectionField(SpreadNode)
 
 
+class PairInput(graphene.InputObjectType):
+    id = graphene.ID(required=True)
+    buy_or_sell = graphene.String(required=True)
+
+
 class SpreadChartQuery(graphene.ObjectType):
-    chart_spreads = graphene.List(
-        SpreadChartDataType,
-        pair_id=graphene.ID(required=True),
+    chart_pairs_spreads = graphene.List(
+        graphene.List(SpreadChartDataType),
+        pairs_params=graphene.List(PairInput, required=True),
         time_frame=graphene.String(default_value='minute'),
         start_date=graphene.DateTime(),
         end_date=graphene.DateTime(default_value=timezone.now())
     )
 
-    def resolve_chart_spreads(self, info, pair_id, time_frame, end_date, start_date=None, **kwargs):
-        try:
-            pair = Pair.objects.get(pk=pair_id)
-        except Pair.DoesNotExist:
-            raise Exception('This pair does not exist')
+    def resolve_chart_pairs_spreads(self, info, pairs_params, time_frame, end_date, start_date=None, **kwargs):
+        data = []
+        for pair_params in pairs_params:
+            try:
+                pair = Pair.objects.get(pk=pair_params.id)
+            except Pair.DoesNotExist:
+                continue
 
-        spreads = pair.spreads.filter(created_at__range=[start_date or end_date - timedelta(days=10), end_date])
-        data = spreads.annotate(
-            timestamp=Trunc('created_at', time_frame)).values('timestamp').annotate(
-            buy_spread=Avg('buy_spread'),
-            sell_spread=Avg('sell_spread')).values(
-            'buy_spread', 'sell_spread', 'timestamp', 'pair').order_by('timestamp')
+            spreads = pair.spreads.filter(created_at__range=[start_date or end_date - timedelta(days=10), end_date])
+            is_buy = pair_params.buy_or_sell == 'buy'
+            is_sell = pair_params.buy_or_sell == 'sell'
+
+            if is_buy:
+                chart_data = spreads.annotate(
+                    timestamp=Trunc('created_at', time_frame)).values('timestamp').annotate(
+                    buy_spread=Avg('buy_spread')).values(
+                    'buy_spread', 'timestamp', 'pair').order_by('timestamp')
+
+            if is_sell:
+                chart_data = spreads.annotate(
+                    timestamp=Trunc('created_at', time_frame)).values('timestamp').annotate(
+                    sell_spread=Avg('sell_spread')).values(
+                    'sell_spread', 'timestamp', 'pair').order_by('timestamp')
+
+            data.append(chart_data)
 
         return data
 

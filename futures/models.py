@@ -49,6 +49,7 @@ class Future(models.Model):
 class Pair(models.Model):
     pair_a = models.ForeignKey(Future, related_name='a_pairs', on_delete=models.CASCADE)
     pair_b = models.ForeignKey(Future, related_name='b_pairs', on_delete=models.CASCADE)
+    created_at = models.DateTimeField(auto_now_add=True)
 
     @property
     def name(self):
