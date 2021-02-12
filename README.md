@@ -21,7 +21,7 @@ $ git clone https://github.com/abdellatifLabr/ftx-data-scraper
   $ pipenv install --dev
   ```
 3. Configure th database
-set database settings in `ftx_data_scraper/settings.py` in line 121 and below.
+set database settings in `ftx_data_scraper/.env` as `postgres://<username>:<password>@localhost/<database_name>`.
 4. Migrate
 5. Create `.env` file similar to `.example.env`
 ```
